@@ -1,0 +1,62 @@
+const int photoresistorPin = A0;
+const int signalLED = 2;
+int lightArray[30];
+int maxValue = 0;
+int lightThreshold;
+
+void setup() {
+  // initialize digital pin LED_BUILTIN as an output.
+  Serial.begin(9600);
+  pinMode(2, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
+}
+
+// the loop function runs over and over again forever
+void loop() {
+
+  for(int i = 0; i < 30; i++){
+
+    delay(100);
+    int lightLevel = analogRead(photoresistorPin);
+    lightArray[i] = lightLevel;
+
+  }
+
+  for(int i = 0; i < 30; i++){
+
+    Serial.println(lightArray[i]);
+    if(maxValue < lightArray[i]){
+      maxValue = lightArray[i];
+    }
+    
+  }
+
+  Serial.print("Max value ");
+  Serial.println(maxValue);
+
+  lightThreshold = maxValue * 0.92;
+  Serial.print("Threshold ");
+  Serial.println(lightThreshold);
+
+  while(true){
+
+    int lightLevel = analogRead(photoresistorPin);
+    Serial.println(lightLevel);
+
+    if (lightLevel <= lightThreshold){
+      digitalWrite(LED_BUILTIN, HIGH);
+      digitalWrite(signalLED, HIGH);
+      digitalWrite(4, HIGH);
+    }
+    else {
+      digitalWrite(LED_BUILTIN, LOW);
+      digitalWrite(signalLED, LOW);
+      digitalWrite(4, LOW);
+    }
+
+    delay(300);
+
+  }
+
+}
